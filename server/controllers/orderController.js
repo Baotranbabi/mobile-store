@@ -85,7 +85,7 @@ const createOrder = async (req, res) => {
       to: customerInfo.email,
       subject: "Xác nhận đơn hàng - Bao Tran Mobile",
       html: `
-        <h2>Cảm ơn bạn đã đặt hàng tại Bao Tran Mobile</h2>
+        <h2>Cảm ơn bạn đã đặt hàng tại Bao Tran Mobile</h2> 
         <p>Xin chào <strong>${customerInfo.fullName}</strong>,</p>
         <p>Đơn hàng của bạn đã được ghi nhận.</p>
 
