@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://baotranmobile-api.onrender.com/api",
 });
 
 export default axiosClient;
