@@ -1,7 +1,7 @@
 const Order = require("../models/Order");
 const Customer = require("../models/Customer");
 const Product = require("../models/Product");
-const sendEmail = require("../utils/sendEmail");
+const sendOrderEmail = require("../utils/sendEmail");
 const createOrder = async (req, res) => {
   try {
     const { customer, customerInfo, items, paymentMethod } = req.body;
@@ -79,31 +79,11 @@ const createOrder = async (req, res) => {
       totalPrice,
       paymentMethod: paymentMethod || "COD",
     });
-    if (customerInfo.email && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-  try {
-    await sendEmail({
-      to: customerInfo.email,
-      subject: "Xác nhận đơn hàng - Bao Tran Mobile",
-      html: `
-        <h2>Cảm ơn bạn đã đặt hàng tại Bao Tran Mobile</h2> 
-        <p>Xin chào <strong>${customerInfo.fullName}</strong>,</p>
-        <p>Đơn hàng của bạn đã được ghi nhận.</p>
-
-        <p><strong>Mã đơn hàng:</strong> ${order.orderCode || order._id}</p>
-        <p><strong>Tổng tiền:</strong> ${order.totalPrice.toLocaleString("vi-VN")}đ</p>
-        <p><strong>Thanh toán:</strong> ${
-          order.paymentMethod === "BANK"
-            ? "Chuyển khoản ngân hàng"
-            : "Thanh toán khi nhận hàng"
-        }</p>
-
-        <p>Nhân viên Bao Tran Mobile sẽ liên hệ xác nhận đơn hàng sớm nhất.</p>
-      `,
-    });
-  } catch (emailError) {
-    console.log("Lỗi gửi email:", emailError.message);
-  }
-}
+    if (customerInfo.email) {
+      sendOrderEmail(customerInfo.email, order).catch((emailError) => {
+        console.log("Lỗi gửi email:", emailError.message);
+      });
+    }
 
     for (const item of orderItems) {
       await Product.findByIdAndUpdate(item.product, {
